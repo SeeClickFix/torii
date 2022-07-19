@@ -17,7 +17,23 @@ we would be able to maintain a 2.x compatible version but this is currently not 
 | v0.4.X and after     | >= 1.12 | >= 1.0.0.beta19.2  |
 | v1.0.0 and after     | >= 3.24 (planned) | >= 3.24 |
 
-**tl;dr;** Use torii 0.3.X if your application is using Ember 1.11 or older, Use the latest 0.10.x version when on Ember 3.14 or older.
+**tl;dr;** Use torii 0.3.X if your application is using Ember 1.11 or older, Use the latest 1.0.x version when on Ember 3.24 or later.
+
+# Upgrading to 1.0.0
+
+v1.0.0 removes implicit injections as these are deprecated in Ember 3.x and removed in Ember 4.x. You must explicitly inject your
+session and torii services like so:
+
+```
+import Route from '@ember/routing/route';
+import AuthenticatedRouteMixin from 'torii/routing/authenticated-route-mixin';
+import { inject as service } from '@ember/service';
+
+export default class MyAuthenticatedRoute extends Route.extend(AuthenticatedRouteMixin) {
+  @service session;
+}
+```
+
 
 # What is Torii?
 
