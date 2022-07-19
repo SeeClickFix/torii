@@ -45,7 +45,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --no-lockfile
       - name: Run Tests
-        run: yarn test
+        run: yarn test:ember
 
   try-scenarios:
     name: ${{ matrix.try-scenario }}
@@ -59,6 +59,7 @@ jobs:
         try-scenario:
           - ember-lts-3.24
           - ember-lts-3.28
+          - ember-lts-4.4
           - ember-release
           - ember-beta
           - ember-canary
