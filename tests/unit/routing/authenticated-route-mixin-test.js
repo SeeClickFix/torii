@@ -5,15 +5,23 @@ import Route from '@ember/routing/route';
 import AuthenticatedRouteMixin from 'torii/routing/authenticated-route-mixin';
 import { module, test } from 'qunit';
 import { configure, getConfiguration } from 'torii/configuration';
+import { setupTest } from 'ember-qunit';
 
-let originalConfiguration;
+let originalConfiguration, createAuthenticatedRoute;
 
 module('Unit | Routing | Authenticated Route Mixin', function (hooks) {
+  setupTest(hooks);
+
   hooks.beforeEach(function () {
     originalConfiguration = getConfiguration();
     configure({
       sessionServiceName: 'session',
     });
+
+    createAuthenticatedRoute = (attrs) => {
+      class AuthenticatedRoute extends EmberRouter.extend(AuthenticatedRouteMixin, attrs) {}
+      return new AuthenticatedRoute(this.owner);
+    };
   });
 
   hooks.afterEach(function () {
@@ -187,8 +195,4 @@ module('Unit | Routing | Authenticated Route Mixin', function (hooks) {
       assert.deepEqual(sentTransition, transition, 'transition was sent');
     });
   });
-
-  function createAuthenticatedRoute(attrs) {
-    return EmberRouter.extend(AuthenticatedRouteMixin, attrs).create();
-  }
 });
