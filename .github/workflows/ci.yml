@@ -30,7 +30,7 @@ jobs:
       - name: Lint
         run: yarn lint
       - name: Run Tests
-        run: yarn test
+        run: yarn test:ember
   floating:
     name: "Floating Dependencies"
     runs-on: ubuntu-latest
@@ -57,10 +57,15 @@ jobs:
       fail-fast: false
       matrix:
         try-scenario:
-          - ember-lts-3.8
-          # - ember-release
-          # - ember-beta
-          # - ember-canary
+          - ember-lts-3.24
+          - ember-lts-3.28
+          - ember-release
+          - ember-beta
+          - ember-canary
+          - ember-default-with-jquery
+          - ember-classic
+          - embroider-safe
+          - embroider-optimized
 
     steps:
       - uses: actions/checkout@v3
