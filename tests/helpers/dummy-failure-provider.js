@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes */
 /**
  * This class emulates a failed authentication.
  */

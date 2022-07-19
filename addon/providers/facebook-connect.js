@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-get */
 /* global FB */
 
 /**

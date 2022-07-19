@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-new-mixins */
 import { resolve } from 'rsvp';
 import Mixin from '@ember/object/mixin';
 import { getConfiguration } from 'torii/configuration';

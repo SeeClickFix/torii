@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes, ember/no-get */
 import Ember from 'ember';
 import { Promise as EmberPromise, reject } from 'rsvp';
 import Service from '@ember/service';

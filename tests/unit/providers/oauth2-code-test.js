@@ -1,3 +1,4 @@
+/* eslint-disable ember/avoid-leaking-state-in-ember-objects, qunit/no-ok-equality */
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import { configure } from 'torii/configuration';

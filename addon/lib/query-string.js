@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes */
 import { A } from '@ember/array';
 import { camelize } from '@ember/string';
 import EmberObject, { get } from '@ember/object';

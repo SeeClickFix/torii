@@ -1,3 +1,4 @@
+/* eslint-disable qunit/no-ok-equality */
 import { module, test } from 'qunit';
 import { configure } from 'torii/configuration';
 import AzureAdProvider from 'torii/providers/azure-ad-oauth2';

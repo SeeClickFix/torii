@@ -1,3 +1,4 @@
+/* eslint-disable qunit/require-expect */
 import DummyAdapter from '../../helpers/dummy-adapter';
 import { module, test } from 'qunit';
 

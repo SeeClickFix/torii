@@ -1,3 +1,4 @@
+/* eslint-disable ember/avoid-leaking-state-in-ember-objects */
 /**
  * This class implements authentication against google
  * using the client-side OAuth2 authorization flow in a popup window.

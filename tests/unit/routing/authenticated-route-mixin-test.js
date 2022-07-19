@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier, ember/no-classic-classes, qunit/require-expect */
 import EmberRouter from '@ember/routing/router';
 import { later } from '@ember/runloop';
 import { Promise as EmberPromise, resolve, reject } from 'rsvp';

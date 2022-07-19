@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-mixins, qunit/no-conditional-assertions, qunit/no-negated-ok, qunit/require-expect */
 import { run } from '@ember/runloop';
 import RedirectHandler from 'torii/redirect-handler';
 import { CURRENT_REQUEST_KEY } from 'torii/mixins/ui-service-mixin';

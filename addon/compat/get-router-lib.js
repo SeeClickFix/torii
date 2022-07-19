@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-private-routing-service */
 export default function getRouterLib(router) {
   /**
    * `router.router` deprecated in 2.13 until 2.16

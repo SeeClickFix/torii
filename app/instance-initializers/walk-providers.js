@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import { lookup } from 'torii/lib/container-utils';
 import { getConfiguration } from 'torii/configuration';
 

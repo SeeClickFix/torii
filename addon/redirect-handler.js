@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-mixins, ember/no-classic-classes */
 /**
  * RedirectHandler will attempt to find
  * these keys in the URL. If found,

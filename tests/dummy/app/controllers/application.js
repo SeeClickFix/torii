@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes, ember/no-actions-hash, ember/no-get */
 import { A } from '@ember/array';
 import { computed } from '@ember/object';
 import { inject as service } from '@ember/service';

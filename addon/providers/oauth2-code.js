@@ -1,3 +1,4 @@
+/* eslint-disable ember/avoid-leaking-state-in-ember-objects, ember/no-get, ember/no-side-effects */
 import { computed } from '@ember/object';
 import Provider from 'torii/providers/base';
 import { configurable } from 'torii/configuration';

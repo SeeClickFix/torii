@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes */
 import Service from '@ember/service';
 import { Promise as EmberPromise } from 'rsvp';
 import { getOwner } from 'torii/lib/container-utils';

@@ -1,3 +1,4 @@
+/* eslint-disable qunit/no-negated-ok */
 import StateMachine from 'torii/lib/state-machine';
 import { module, test } from 'qunit';
 

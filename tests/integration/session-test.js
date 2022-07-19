@@ -1,3 +1,4 @@
+/* eslint-disable qunit/no-negated-ok, qunit/require-expect */
 import { setupTest } from 'ember-qunit';
 
 import SessionService from 'torii/services/torii-session';

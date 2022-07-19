@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-mixins, qunit/resolve-async, qunit/literal-compare-order, qunit/require-expect, qunit/no-negated-ok */
 import { run } from '@ember/runloop';
 import Popup from 'torii/services/popup';
 import PopupIdSerializer from 'torii/lib/popup-id-serializer';

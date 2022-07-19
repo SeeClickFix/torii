@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-mixins, no-prototype-builtins, ember/no-classic-classes */
 import Evented from '@ember/object/evented';
 import EmberObject from '@ember/object';
 import UiServiceMixin from 'torii/mixins/ui-service-mixin';

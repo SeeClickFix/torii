@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes, qunit/no-negated-ok, ember/no-get */
 import Route from '@ember/routing/route';
 import { run } from '@ember/runloop';
 import { module, test } from 'qunit';

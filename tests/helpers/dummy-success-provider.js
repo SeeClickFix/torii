@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes */
 /**
  * This class emulates a successful authentication, returning
  * a dummy authorization object.

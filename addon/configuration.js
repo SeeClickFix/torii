@@ -1,3 +1,4 @@
+/* eslint-disable ember/require-computed-property-dependencies, ember/no-side-effects, ember/no-get */
 import { get, computed } from '@ember/object';
 
 const NAMESPACE = 'providers';

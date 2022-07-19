@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-get, ember/avoid-leaking-state-in-ember-objects */
 import { configurable } from 'torii/configuration';
 import Oauth2 from 'torii/providers/oauth2-code';
 import { computed } from '@ember/object';

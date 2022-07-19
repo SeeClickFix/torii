@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes, qunit/require-expect, ember/avoid-leaking-state-in-ember-objects */
 import { later } from '@ember/runloop';
 import { Promise as EmberPromise, reject } from 'rsvp';
 import Route from '@ember/routing/route';

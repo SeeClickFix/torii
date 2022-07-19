@@ -1,3 +1,4 @@
+/* eslint-disable qunit/require-expect */
 import Provider from '../../helpers/dummy-failure-provider';
 import { module, test } from 'qunit';
 

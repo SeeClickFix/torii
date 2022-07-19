@@ -1,3 +1,4 @@
+/* eslint-disable qunit/require-expect */
 import { setupTest } from 'ember-qunit';
 import { configure } from 'torii/configuration';
 import { module, test } from 'qunit';

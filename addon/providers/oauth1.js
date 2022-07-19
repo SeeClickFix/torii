@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-get */
 /*
  * This class implements authentication against an API
  * using the OAuth1.0a request token flow in a popup window.

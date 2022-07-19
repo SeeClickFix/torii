@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes, ember/no-get */
 import EmberObject from '@ember/object';
 import { run } from '@ember/runloop';
 import { configurable, configure } from 'torii/configuration';

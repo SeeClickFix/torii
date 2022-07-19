@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-get */
 import Provider from 'torii/providers/oauth2-code';
 
 var Oauth2Bearer = Provider.extend({

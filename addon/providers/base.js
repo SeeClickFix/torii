@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes, ember/no-get */
 import EmberObject, { computed } from '@ember/object';
 import requiredProperty from 'torii/lib/required-property';
 import { getOwner } from 'torii/lib/container-utils';

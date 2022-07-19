@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-components, qunit/no-negated-ok, ember/no-classic-classes */
 import { module, test } from 'qunit';
 import { inject as service } from '@ember/service';
 import Component from '@ember/component';

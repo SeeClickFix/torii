@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-new-mixins */
 import { later, run, cancel } from '@ember/runloop';
 import { Promise as EmberPromise } from 'rsvp';
 import Mixin from '@ember/object/mixin';

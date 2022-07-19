@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes */
 import { Promise as EmberPromise } from 'rsvp';
 import EmberObject from '@ember/object';
 

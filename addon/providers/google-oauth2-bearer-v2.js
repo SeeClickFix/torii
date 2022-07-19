@@ -1,3 +1,4 @@
+/* eslint-disable ember/avoid-leaking-state-in-ember-objects, ember/no-get */
 import { Promise as EmberPromise } from 'rsvp';
 import { run } from '@ember/runloop';
 import { assign } from '@ember/polyfills';

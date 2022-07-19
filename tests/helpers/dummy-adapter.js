@@ -1,3 +1,4 @@
+/* eslint-disable ember/no-classic-classes */
 import { resolve } from 'rsvp';
 import EmberObject from '@ember/object';
 
