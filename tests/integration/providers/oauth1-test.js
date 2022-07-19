@@ -8,22 +8,22 @@ import MockPopupService from '../../helpers/mock-popup-service';
 const requestTokenUri = 'http://localhost:3000/oauth/callback';
 const providerName = 'oauth1';
 
-module('Integration | Provider | Oauth1', function(hooks) {
+module('Integration | Provider | Oauth1', function (hooks) {
   setupTest(hooks);
 
-  hooks.beforeEach(function() {
-    this.owner.register('torii-provider:'+providerName, OAuth1Provider);
+  hooks.beforeEach(function () {
+    this.owner.register('torii-provider:' + providerName, OAuth1Provider);
 
     configure({
       providers: {
         [providerName]: {
-          requestTokenUri: requestTokenUri
-        }
-      }
+          requestTokenUri: requestTokenUri,
+        },
+      },
     });
   });
 
-  test("Opens a popup to the requestTokenUri", function(assert){
+  test('Opens a popup to the requestTokenUri', function (assert) {
     class MyPopupService extends MockPopupService {
       async open(url) {
         const result = super.open(...arguments);
@@ -37,10 +37,12 @@ module('Integration | Provider | Oauth1', function(hooks) {
     const mockPopup = MyPopupService.create();
     const torii = this.owner.lookup('service:torii');
 
-    this.owner.register('torii-service:popup', mockPopup, {instantiate: false});
+    this.owner.register('torii-service:popup', mockPopup, {
+      instantiate: false,
+    });
 
-    return torii.open(providerName).finally(function() {
-      assert.ok(mockPopup.opened, "Popup service is opened");
+    return torii.open(providerName).finally(function () {
+      assert.ok(mockPopup.opened, 'Popup service is opened');
     });
   });
 });

@@ -16,14 +16,16 @@ var Oauth1 = Provider.extend({
   },
 
   open(options) {
-    var name        = this.get('name'),
-        url         = this.buildRequestTokenUrl();
+    var name = this.get('name'),
+      url = this.buildRequestTokenUrl();
 
-    return this.get('popup').open(url, ['code'], options).then(function(authData){
-      authData.provider = name;
-      return authData;
-    });
-  }
+    return this.get('popup')
+      .open(url, ['code'], options)
+      .then(function (authData) {
+        authData.provider = name;
+        return authData;
+      });
+  },
 });
 
 export default Oauth1;

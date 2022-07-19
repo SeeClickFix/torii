@@ -2,7 +2,7 @@ import { run } from '@ember/runloop';
 import config from '../../config/environment';
 
 const {
-  torii: { sessionServiceName }
+  torii: { sessionServiceName },
 } = config;
 
 export function stubValidSession(owner, sessionData) {
@@ -14,4 +14,3 @@ export function stubValidSession(owner, sessionData) {
     sm.send('finishOpen', sessionData);
   });
 }
-

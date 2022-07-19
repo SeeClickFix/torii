@@ -6,7 +6,8 @@ export default {
   after: 'torii',
 
   initialize(application) {
-    if (arguments[1]) { // Ember < 2.1
+    if (arguments[1]) {
+      // Ember < 2.1
       application = arguments[1];
     }
 
@@ -18,6 +19,10 @@ export default {
     bootstrapSession(application, configuration.sessionServiceName);
 
     var sessionFactoryName = 'service:' + configuration.sessionServiceName;
-    application.inject('adapter', configuration.sessionServiceName, sessionFactoryName);
-  }
+    application.inject(
+      'adapter',
+      configuration.sessionServiceName,
+      sessionFactoryName
+    );
+  },
 };

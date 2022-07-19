@@ -1,18 +1,18 @@
 import StateMachine from 'torii/lib/state-machine';
 import { module, test } from 'qunit';
 
-module('Unit | Lib | State Machine', function(/*hooks*/) {
-  test("can transition from one state to another", function(assert){
+module('Unit | Lib | State Machine', function (/*hooks*/) {
+  test('can transition from one state to another', function (assert) {
     var sm = new StateMachine({
       initialState: 'initial',
       states: {
         initial: {
-          foo: 'bar'
+          foo: 'bar',
         },
         started: {
-          baz: 'blah'
-        }
-      }
+          baz: 'blah',
+        },
+      },
     });
 
     assert.equal(sm.currentStateName, 'initial');

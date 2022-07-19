@@ -20,8 +20,15 @@ function reopenOrRegister(applicationInstance, factoryName, mixin) {
   }
 }
 
-export default function toriiBootstrapRouting(applicationInstance, authenticatedRoutes){
-  reopenOrRegister(applicationInstance, 'route:application', ApplicationRouteMixin);
+export default function toriiBootstrapRouting(
+  applicationInstance,
+  authenticatedRoutes
+) {
+  reopenOrRegister(
+    applicationInstance,
+    'route:application',
+    ApplicationRouteMixin
+  );
   for (var i = 0; i < authenticatedRoutes.length; i++) {
     var routeName = authenticatedRoutes[i];
     var factoryName = 'route:' + routeName;

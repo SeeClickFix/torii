@@ -14,15 +14,30 @@ import ToriiService from 'torii/services/torii';
 import PopupService from 'torii/services/popup';
 import IframeService from 'torii/services/iframe';
 
-export default function(application) {
+export default function (application) {
   application.register('service:torii', ToriiService);
 
-  application.register('torii-provider:linked-in-oauth2', LinkedInOauth2Provider);
+  application.register(
+    'torii-provider:linked-in-oauth2',
+    LinkedInOauth2Provider
+  );
   application.register('torii-provider:google-oauth2', GoogleOauth2Provider);
-  application.register('torii-provider:google-oauth2-bearer', GoogleOauth2BearerProvider);
-  application.register('torii-provider:google-oauth2-bearer-v2', GoogleOauth2BearerV2Provider);
-  application.register('torii-provider:facebook-connect', FacebookConnectProvider);
-  application.register('torii-provider:facebook-oauth2', FacebookOauth2Provider);
+  application.register(
+    'torii-provider:google-oauth2-bearer',
+    GoogleOauth2BearerProvider
+  );
+  application.register(
+    'torii-provider:google-oauth2-bearer-v2',
+    GoogleOauth2BearerV2Provider
+  );
+  application.register(
+    'torii-provider:facebook-connect',
+    FacebookConnectProvider
+  );
+  application.register(
+    'torii-provider:facebook-oauth2',
+    FacebookOauth2Provider
+  );
   application.register('torii-provider:twitter', TwitterProvider);
   application.register('torii-provider:github-oauth2', GithubOauth2Provider);
   application.register('torii-provider:azure-ad-oauth2', AzureAdOauth2Provider);

@@ -3,7 +3,7 @@ import { run } from '@ember/runloop';
 import { configurable, configure } from 'torii/configuration';
 import { module, test } from 'qunit';
 
-module('Unit | Configuration', function(hooks) {
+module('Unit | Configuration', function (hooks) {
   let testable;
 
   const Testable = EmberObject.extend({
@@ -11,27 +11,27 @@ module('Unit | Configuration', function(hooks) {
     required: configurable('apiKey'),
     defaulted: configurable('scope', 'email'),
     defaultedFunctionValue: 'found-via-get',
-    defaultedFunction: configurable('redirectUri', function(){
+    defaultedFunction: configurable('redirectUri', function () {
       return this.get('defaultedFunctionValue');
     }),
   });
 
-  hooks.beforeEach(function() {
+  hooks.beforeEach(function () {
     testable = Testable.create();
   });
 
-  hooks.afterEach(function() {
+  hooks.afterEach(function () {
     run(testable, 'destroy');
   });
 
-  test("it should throw when reading a value not defaulted", function(assert){
+  test('it should throw when reading a value not defaulted', function (assert) {
     let threw = false;
     let message;
 
     configure({
       providers: {
-        test: {}
-      }
+        test: {},
+      },
     });
 
     try {
@@ -42,16 +42,21 @@ module('Unit | Configuration', function(hooks) {
     }
 
     assert.ok(threw, 'read threw');
-    assert.ok(/Expected configuration value apiKey to be defined for provider named test/.test(message), 'did not have proper error: '+message);
+    assert.ok(
+      /Expected configuration value apiKey to be defined for provider named test/.test(
+        message
+      ),
+      'did not have proper error: ' + message
+    );
   });
 
-  test("it should read values", function(assert){
+  test('it should read values', function (assert) {
     configure({
       providers: {
         test: {
-          apiKey: 'item val'
-        }
-      }
+          apiKey: 'item val',
+        },
+      },
     });
 
     const value = testable.get('required');
@@ -59,11 +64,11 @@ module('Unit | Configuration', function(hooks) {
     assert.equal(value, 'item val');
   });
 
-  test("it should read default values", function(assert){
+  test('it should read default values', function (assert) {
     configure({
       providers: {
-        test: { apiKey: 'item val' }
-      }
+        test: { apiKey: 'item val' },
+      },
     });
 
     const value = testable.get('defaulted');
@@ -71,13 +76,13 @@ module('Unit | Configuration', function(hooks) {
     assert.equal(value, 'email');
   });
 
-  test("it should override default values", function(assert){
+  test('it should override default values', function (assert) {
     configure({
       providers: {
         test: {
-          scope: 'baz'
-        }
-      }
+          scope: 'baz',
+        },
+      },
     });
 
     const value = testable.get('defaulted');
@@ -85,7 +90,7 @@ module('Unit | Configuration', function(hooks) {
     assert.equal(value, 'baz');
   });
 
-  test("it read default values from a function", function(assert){
+  test('it read default values from a function', function (assert) {
     const value = testable.get('defaultedFunction');
 
     assert.equal(value, 'found-via-get');

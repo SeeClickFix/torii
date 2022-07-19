@@ -5,11 +5,11 @@ import bootstrapRouting from 'torii/bootstrap/routing';
 import { getConfiguration } from 'torii/configuration';
 import getRouterInstance from 'torii/compat/get-router-instance';
 import getRouterLib from 'torii/compat/get-router-lib';
-import "torii/router-dsl-ext";
+import 'torii/router-dsl-ext';
 
 export default {
   name: 'torii-setup-routes',
-  initialize(applicationInstance /*, registry */){
+  initialize(applicationInstance /*, registry */) {
     const configuration = getConfiguration();
 
     if (!configuration.sessionServiceName) {
@@ -19,7 +19,7 @@ export default {
     let _router = getRouterInstance(applicationInstance);
     const router = applicationInstance.lookup('service:router');
 
-    var setupRoutes = function(){
+    var setupRoutes = function () {
       let routerLib = getRouterLib(_router);
       var authenticatedRoutes = routerLib.authenticatedRoutes;
       var hasAuthenticatedRoutes = !Ember.isEmpty(authenticatedRoutes);
@@ -31,5 +31,5 @@ export default {
     };
 
     router.on('routeWillChange', setupRoutes);
-  }
+  },
 };

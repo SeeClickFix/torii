@@ -5,4 +5,3 @@ export default function getRouterLib(router) {
    */
   return router._routerMicrolib || router.router;
 }
-

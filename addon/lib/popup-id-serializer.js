@@ -1,10 +1,10 @@
 var PopupIdSerializer = {
   serialize(popupId) {
-    return "torii-popup:" + popupId;
+    return 'torii-popup:' + popupId;
   },
 
   deserialize(serializedPopupId) {
-    if (!serializedPopupId){
+    if (!serializedPopupId) {
       return null;
     }
 
@@ -12,6 +12,5 @@ var PopupIdSerializer = {
     return match ? match[2] : null;
   },
 };
-
 
 export default PopupIdSerializer;

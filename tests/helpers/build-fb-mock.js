@@ -1,4 +1,4 @@
-export default function(){
+export default function () {
   return {
     init() {},
 
@@ -15,8 +15,8 @@ export default function(){
 
       callback({
         authResponse: authResponse,
-        status: 567
+        status: 567,
       });
-    }
+    },
   };
 }

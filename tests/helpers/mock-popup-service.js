@@ -7,13 +7,13 @@ export default class MyFirstPopup extends PopupService {
     super(...arguments);
 
     this.opened = false;
-    this.state = options.state
+    this.state = options.state;
   }
 
   open(url, keys) {
     this.opened = true;
 
-    const parser = ParseQueryString.create({url: url, keys: ['state']});
+    const parser = ParseQueryString.create({ url: url, keys: ['state'] });
     const data = parser.parse();
     let state = data.state;
 

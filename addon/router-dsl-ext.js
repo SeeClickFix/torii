@@ -6,7 +6,7 @@ var proto = Ember.RouterDSL.prototype;
 
 var currentMap = null;
 
-proto.authenticatedRoute = function() {
+proto.authenticatedRoute = function () {
   this.route.apply(this, arguments);
   currentMap.push(arguments[0]);
 };
@@ -17,5 +17,5 @@ Router.reopen({
     this._super.apply(this, arguments);
     let routerLib = getRouterLib(this);
     routerLib.authenticatedRoutes = currentMap;
-  }
+  },
 });

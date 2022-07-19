@@ -5,7 +5,8 @@ export default {
   name: 'torii-callback',
   before: 'torii',
   initialize(application) {
-    if (arguments[1]) { // Ember < 2.1
+    if (arguments[1]) {
+      // Ember < 2.1
       application = arguments[1];
     }
 
@@ -14,8 +15,8 @@ export default {
     }
 
     application.deferReadiness();
-    RedirectHandler.handle(window).catch(function(){
+    RedirectHandler.handle(window).catch(function () {
       application.advanceReadiness();
     });
-  }
+  },
 };

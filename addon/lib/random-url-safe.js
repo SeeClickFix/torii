@@ -8,4 +8,3 @@ export default function randomUrlSafe(length) {
 
   return result;
 }
-
