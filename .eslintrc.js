@@ -33,7 +33,6 @@ module.exports = {
       ],
       excludedFiles: [
         'addon/**',
-        'addon-test-support/**',
         'app/**',
         'tests/dummy/app/**'
       ],

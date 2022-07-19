@@ -12,9 +12,6 @@
     "name": "Vestorly",
     "email": "hello@vestorly.com"
   },
-  "directories": {
-    "lib": "lib"
-  },
   "maintainers": [
     {
       "name": "Matt Beale",
@@ -46,7 +43,7 @@
   },
   "scripts": {
     "build": "ember build",
-    "lint": "eslint ./*.js addon addon-test-support app config lib server test-support tests",
+    "lint": "eslint ./*.js addon app config test-support tests",
     "start": "ember serve",
     "test": "ember test"
   },
