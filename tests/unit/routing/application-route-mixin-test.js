@@ -80,7 +80,8 @@ module('Unit | Routing | Application Route Mixin', function (hooks) {
     assert.expect(2);
 
     let fetchCalled = false;
-    this.owner.register('service:session', 
+    this.owner.register(
+      'service:session',
       {
         fetch() {
           fetchCalled = true;

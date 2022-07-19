@@ -17,11 +17,11 @@ export default Mixin.create({
   },
   checkLogin() {
     let configuration = getConfiguration();
-    let sessionService = getOwner(this).lookup(`service:${configuration.sessionServiceName}`);
-    return sessionService
-      .fetch()
-      .catch(function () {
-        // no-op, cause no session is ok
-      });
+    let sessionService = getOwner(this).lookup(
+      `service:${configuration.sessionServiceName}`
+    );
+    return sessionService.fetch().catch(function () {
+      // no-op, cause no session is ok
+    });
   },
 });

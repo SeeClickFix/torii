@@ -1,4 +1,4 @@
-/* eslint-disable ember/no-new-mixins */
+/* eslint-disable ember/no-new-mixins, ember/no-get */
 import { resolve } from 'rsvp';
 import Mixin from '@ember/object/mixin';
 import { get } from '@ember/object';
@@ -20,7 +20,9 @@ export default Mixin.create({
   authenticate(transition) {
     var configuration = getConfiguration();
     var route = this,
-      session = getOwner(this).lookup(`service:${configuration.sessionServiceName}`),
+      session = getOwner(this).lookup(
+        `service:${configuration.sessionServiceName}`
+      ),
       isAuthenticated = get(session, 'isAuthenticated'),
       hasAttemptedAuth = isAuthenticated !== undefined;
 

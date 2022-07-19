@@ -13,10 +13,14 @@ export default function startApp(attrs) {
     let application = Application.create(attributes);
     application.setupForTesting();
     application.injectTestHelpers();
-    application.register('-environment:main', {
-      isInteractive: true,
-      hasDOM: true,
-    }, { instantiate: false });
+    application.register(
+      '-environment:main',
+      {
+        isInteractive: true,
+        hasDOM: true,
+      },
+      { instantiate: false }
+    );
     setOwner(application, application.__container__.owner);
 
     return application;
