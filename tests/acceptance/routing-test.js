@@ -7,6 +7,7 @@ import Router from 'dummy/router';
 import startApp from '../helpers/start-app';
 import rawConfig from '../../config/environment';
 import lookup from '../helpers/lookup';
+import { inject as service } from '@ember/service';
 
 module('Acceptance | Routing', function (hooks) {
   let configuration = rawConfig.torii;
@@ -82,35 +83,6 @@ module('Acceptance | Routing', function (hooks) {
     assert.ok(checkLoginCalled, 'checkLogin was called');
   });
 
-  test('ApplicationRoute#checkLogin returns the correct name of the session variable when an authenticated route is present', function (assert) {
-    assert.expect(2);
-    configuration.sessionServiceName = 'testName';
-    var routesConfigured = false,
-      sessionFound = false;
-
-    bootApp({
-      map() {
-        routesConfigured = true;
-        this.authenticatedRoute('account');
-      },
-      setup() {
-        app.register('route:application', Route.extend());
-        app.register('route:account', Route.extend());
-      },
-    });
-    var applicationRoute = lookup(app, 'route:application');
-    applicationRoute.reopen({
-      checkLogin() {
-        sessionFound = this.get('testName');
-      },
-    });
-    var router = lookup(app, 'router:main');
-    router.location.setURL('/');
-    applicationRoute.beforeModel();
-    assert.ok(routesConfigured, 'Router map was called');
-    assert.ok(sessionFound, 'session was found with custom name');
-  });
-
   test('authenticated routes get authenticate method', function (assert) {
     assert.expect(2);
     configuration.sessionServiceName = 'session';
@@ -171,8 +143,8 @@ module('Acceptance | Routing', function (hooks) {
         this.authenticatedRoute('secret');
       },
       setup() {
-        app.register('route:application', Route.extend());
-        app.register('route:secret', Route.extend());
+        app.register('route:application', Route.extend({ session: service() }));
+        app.register('route:secret', Route.extend({ session: service() }));
       },
     });
 

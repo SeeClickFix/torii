@@ -5,10 +5,15 @@ import Route from '@ember/routing/route';
 import ApplicationRouteMixin from 'torii/routing/application-route-mixin';
 import { module, test } from 'qunit';
 import { configure, getConfiguration } from 'torii/configuration';
+import { setupTest } from 'ember-qunit';
+import { setOwner } from '@ember/application';
+import { inject as service } from '@ember/service';
 
 let originalConfiguration;
 
 module('Unit | Routing | Application Route Mixin', function (hooks) {
+  setupTest(hooks);
+
   hooks.beforeEach(function () {
     originalConfiguration = getConfiguration();
     configure({
@@ -71,18 +76,23 @@ module('Unit | Routing | Application Route Mixin', function (hooks) {
     });
   });
 
-  test('checkLogic fails silently when no session is available', function (assert) {
+  test('checkLogin fails silently when no session is available', function (assert) {
     assert.expect(2);
 
     let fetchCalled = false;
-    const route = Route.extend(ApplicationRouteMixin, {
-      session: {
+    this.owner.register('service:session', 
+      {
         fetch() {
           fetchCalled = true;
           return reject('no session is available');
         },
       },
+      { instantiate: false }
+    );
+    const route = Route.extend(ApplicationRouteMixin, {
+      session: service(),
     }).create();
+    setOwner(route, this.owner);
 
     return route.checkLogin().then(function () {
       assert.ok(fetchCalled, 'fetch default provider was called');

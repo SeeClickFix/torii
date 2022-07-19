@@ -7,6 +7,7 @@ import AuthenticatedRouteMixin from 'torii/routing/authenticated-route-mixin';
 import { module, test } from 'qunit';
 import { configure, getConfiguration } from 'torii/configuration';
 import { setupTest } from 'ember-qunit';
+import { inject as service } from '@ember/service';
 
 let originalConfiguration, createAuthenticatedRoute;
 
@@ -88,7 +89,7 @@ module('Unit | Routing | Authenticated Route Mixin', function (hooks) {
       },
     });
 
-    return route.authenticate().then(function () {
+    return route.authenticate({ send() {} }).then(function () {
       assert.ok(true);
     });
   });
@@ -98,16 +99,17 @@ module('Unit | Routing | Authenticated Route Mixin', function (hooks) {
 
     let fetchCalled = false;
 
-    const route = createAuthenticatedRoute({
-      session: {
-        isAuthenticated: undefined,
-        fetch() {
-          fetchCalled = true;
-          return resolve();
-        },
+    this.owner.register('service:session', {
+      isAuthenticated: undefined,
+      fetch() {
+        fetchCalled = true;
+        return resolve();
       },
+    }, { instantiate: false });
+    const route = createAuthenticatedRoute({
+      session: service(),
     });
-    return route.authenticate().then(function () {
+    return route.authenticate({ send() {} }).then(function () {
       assert.ok(fetchCalled, 'fetch default provider was called');
     });
   });
@@ -118,19 +120,20 @@ module('Unit | Routing | Authenticated Route Mixin', function (hooks) {
     let fetchCalled = false;
     let accessDeniedCalled = false;
 
-    const route = createAuthenticatedRoute({
-      session: {
-        isAuthenticated: undefined,
-        fetch() {
-          fetchCalled = true;
-          return reject();
-        },
+    this.owner.register('service:session', {
+      isAuthenticated: undefined,
+      fetch() {
+        fetchCalled = true;
+        return reject();
       },
+    }, { instantiate: false });
+    const route = createAuthenticatedRoute({
+      session: service(),
       accessDenied() {
         accessDeniedCalled = true;
       },
     });
-    return route.authenticate().then(function () {
+    return route.authenticate({ send() {} }).then(function () {
       assert.ok(fetchCalled, 'fetch default provider was called');
       assert.ok(accessDeniedCalled, 'accessDenied was called');
     });
@@ -142,14 +145,15 @@ module('Unit | Routing | Authenticated Route Mixin', function (hooks) {
     let sentActionName;
     let fetchCalled = false;
 
-    const route = createAuthenticatedRoute({
-      session: {
-        isAuthenticated: undefined,
-        fetch() {
-          fetchCalled = true;
-          return reject();
-        },
+    this.owner.register('service:session', {
+      isAuthenticated: undefined,
+      fetch() {
+        fetchCalled = true;
+        return reject();
       },
+    }, { instantiate: false });
+    const route = createAuthenticatedRoute({
+      session: service(),
     });
     return route
       .authenticate({
@@ -177,14 +181,16 @@ module('Unit | Routing | Authenticated Route Mixin', function (hooks) {
       targetName: 'custom.route',
     };
 
-    const route = createAuthenticatedRoute({
-      session: {
-        isAuthenticated: undefined,
-        fetch() {
-          fetchCalled = true;
-          return reject();
-        },
+    this.owner.register('service:session', {
+      isAuthenticated: undefined,
+      fetch() {
+        fetchCalled = true;
+        return reject();
       },
+    }, { instantiate: false });
+
+    const route = createAuthenticatedRoute({
+      session: service(),
 
       accessDenied(transition) {
         sentTransition = transition;

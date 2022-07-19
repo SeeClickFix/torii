@@ -1,6 +1,8 @@
 /* eslint-disable ember/no-new-mixins */
 import { resolve } from 'rsvp';
 import Mixin from '@ember/object/mixin';
+import { get } from '@ember/object';
+import { getOwner } from '@ember/application';
 import { getConfiguration } from 'torii/configuration';
 
 export default Mixin.create({
@@ -18,10 +20,8 @@ export default Mixin.create({
   authenticate(transition) {
     var configuration = getConfiguration();
     var route = this,
-      session = this.get(configuration.sessionServiceName),
-      isAuthenticated = this.get(
-        configuration.sessionServiceName + '.isAuthenticated'
-      ),
+      session = getOwner(this).lookup(`service:${configuration.sessionServiceName}`),
+      isAuthenticated = get(session, 'isAuthenticated'),
       hasAttemptedAuth = isAuthenticated !== undefined;
 
     if (!isAuthenticated) {
@@ -31,7 +31,7 @@ export default Mixin.create({
         return route.accessDenied(transition);
       } else {
         return session.fetch().catch(function () {
-          return route.accessDenied(transition);
+          return route.accessDenied(session.attemptedTransition);
         });
       }
     } else {

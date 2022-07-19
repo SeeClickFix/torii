@@ -1,6 +1,7 @@
 /* eslint-disable ember/no-new-mixins */
 import Mixin from '@ember/object/mixin';
 import { getConfiguration } from 'torii/configuration';
+import { getOwner } from '@ember/application';
 
 export default Mixin.create({
   beforeModel(transition) {
@@ -16,7 +17,8 @@ export default Mixin.create({
   },
   checkLogin() {
     let configuration = getConfiguration();
-    return this.get(configuration.sessionServiceName)
+    let sessionService = getOwner(this).lookup(`service:${configuration.sessionServiceName}`);
+    return sessionService
       .fetch()
       .catch(function () {
         // no-op, cause no session is ok

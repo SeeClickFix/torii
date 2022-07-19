@@ -17,12 +17,5 @@ export default {
     }
 
     bootstrapSession(application, configuration.sessionServiceName);
-
-    var sessionFactoryName = 'service:' + configuration.sessionServiceName;
-    application.inject(
-      'adapter',
-      configuration.sessionServiceName,
-      sessionFactoryName
-    );
   },
 };

@@ -8,8 +8,10 @@ import { run } from '@ember/runloop';
 import startApp from '../helpers/start-app';
 import configuration from '../../config/environment';
 import lookup from '../helpers/lookup';
+import { setupTest } from 'ember-qunit';
 
 module('Acceptance | Ember Initialization', function (hooks) {
+  setupTest(hooks);
   let toriiConfiguration = configuration.torii;
   let originalSessionServiceName;
 
@@ -30,29 +32,6 @@ module('Acceptance | Ember Initialization', function (hooks) {
     this.application.register('controller:application', Controller.extend());
     const controller = lookup(this.application, 'controller:application');
     assert.ok(!controller.get('session'), 'controller has no session');
-  });
-
-  test('session is injected with the name in the configuration', function (assert) {
-    toriiConfiguration.sessionServiceName = 'wackySessionName';
-
-    this.application = startApp();
-    assert.ok(
-      lookup(this.application, 'service:wackySessionName'),
-      'service:wackySessionName is injected'
-    );
-
-    this.application.register('controller:application', Controller.extend());
-    const controller = lookup(this.application, 'controller:application');
-
-    assert.ok(
-      controller.get('wackySessionName'),
-      'Controller has session with accurate name'
-    );
-
-    assert.ok(
-      !controller.get('session'),
-      'Controller does not have "session" property name'
-    );
   });
 
   test('session is injectable using inject.service', function (assert) {

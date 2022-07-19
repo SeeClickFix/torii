@@ -1,4 +1,5 @@
 import { run } from '@ember/runloop';
+import { setOwner } from '@ember/application';
 
 import Application from '../../app';
 import config from '../../config/environment';
@@ -12,6 +13,11 @@ export default function startApp(attrs) {
     let application = Application.create(attributes);
     application.setupForTesting();
     application.injectTestHelpers();
+    application.register('-environment:main', {
+      isInteractive: true,
+      hasDOM: true,
+    }, { instantiate: false });
+    setOwner(application, application.__container__.owner);
 
     return application;
   });

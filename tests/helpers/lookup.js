@@ -1,3 +1,5 @@
+import { getOwner } from '@ember/application';
+
 export default function lookup(app, key) {
-  return app.__container__.lookup(key);
+  return getOwner(app).lookup(key);
 }
