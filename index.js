@@ -2,7 +2,7 @@
 'use strict';
 
 module.exports = {
-  name: require('./package.json').name,
+  name: require('./package').name,
   included: function(app) {
     var hostApp = this._findApp(app);
     var toriiConfig = hostApp.project.config(app.env)['torii'];

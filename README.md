@@ -15,7 +15,7 @@ we would be able to maintain a 2.x compatible version but this is currently not 
 |-----------|---------|--------------------|
 | v0.3.X and before    | <= 1.13 | <= 1.0.0.beta19.2  |
 | v0.4.X and after     | >= 1.12 | >= 1.0.0.beta19.2  |
-| v1.0.0 and after     | >= 3.15 (planned) | >= 3.15 |
+| v1.0.0 and after     | >= 3.24 (planned) | >= 3.24 |
 
 **tl;dr;** Use torii 0.3.X if your application is using Ember 1.11 or older, Use the latest 0.10.x version when on Ember 3.14 or older.
 
