@@ -60,25 +60,23 @@ var ServicesMixin = Mixin.create({
       // Using postMessage as an alternative to localStorage/storageEvent
       // for case of web site embedded in iframe
       messageToriiEventHandler = function (messageEvent) {
-        if (messageEvent.source === service.remote) {
-          if (messageEvent.data === 'getPendingRequestKey') {
-            service.remote.postMessage(
-              JSON.stringify({ pendingRequestKey: service.pendingRequestKey }),
-              window.location.origin
-            );
-          } else {
-            const msg = JSON.parse(messageEvent.data);
-            const key = Object.keys(msg)[0];
-            var remoteIdFromEvent = PopupIdSerializer.deserialize(
-              decodeURIComponent(key)
-            );
-            if (remoteId === remoteIdFromEvent) {
-              var data = parseMessage(msg[key], keys);
-              localStorage.removeItem(key);
-              run(function () {
-                resolve(data);
-              });
-            }
+        if (messageEvent.data === 'getPendingRequestKey') {
+          messageEvent.source.postMessage(
+            JSON.stringify({ pendingRequestKey: service.pendingRequestKey }),
+            window.location.origin
+          );
+        } else {
+          const msg = JSON.parse(messageEvent.data);
+          const key = Object.keys(msg)[0];
+          var remoteIdFromEvent = PopupIdSerializer.deserialize(
+            decodeURIComponent(key)
+          );
+          if (remoteId === remoteIdFromEvent) {
+            var data = parseMessage(msg[key], keys);
+            localStorage.removeItem(key);
+            run(function () {
+              resolve(data);
+            });
           }
         }
       };
