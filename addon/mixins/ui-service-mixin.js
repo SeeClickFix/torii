@@ -38,6 +38,7 @@ var ServicesMixin = Mixin.create({
     let service = this;
     let lastRemote = this.remote;
     let storageToriiEventHandler;
+    let messageToriiEventHandler;
 
     return new EmberPromise(function (resolve, reject) {
       if (lastRemote) {
@@ -55,7 +56,34 @@ var ServicesMixin = Mixin.create({
           });
         }
       };
+
+      // Using postMessage as an alternative to localStorage/storageEvent
+      // for case of web site embedded in iframe
+      messageToriiEventHandler = function (messageEvent) {
+        if (messageEvent.data === 'getPendingRequestKey') {
+          messageEvent.source.postMessage(
+            JSON.stringify({ pendingRequestKey: service.pendingRequestKey }),
+            window.location.origin
+          );
+        } else {
+          const msg = JSON.parse(messageEvent.data);
+          const key = Object.keys(msg)[0];
+          var remoteIdFromEvent = PopupIdSerializer.deserialize(
+            decodeURIComponent(key)
+          );
+          if (remoteId === remoteIdFromEvent) {
+            var data = parseMessage(msg[key], keys);
+            localStorage.removeItem(key);
+            run(function () {
+              resolve(data);
+            });
+          }
+        }
+      };
+      window.addEventListener('message', messageToriiEventHandler);
+
       var pendingRequestKey = PopupIdSerializer.serialize(remoteId);
+      service.pendingRequestKey = pendingRequestKey;
       localStorage.setItem(CURRENT_REQUEST_KEY, pendingRequestKey);
       localStorage.removeItem(WARNING_KEY);
 
@@ -115,6 +143,7 @@ var ServicesMixin = Mixin.create({
     }).finally(function () {
       // didClose will reject this same promise, but it has already resolved.
       service.close();
+      window.removeEventListener('message', messageToriiEventHandler);
       window.removeEventListener('storage', storageToriiEventHandler);
     });
   },

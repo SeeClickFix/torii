@@ -4,16 +4,49 @@
     <meta charset="UTF-8">
     <title>Torii OAuth Redirect</title>
     <script>
-      var CURRENT_REQUEST_KEY = '__torii_request';
-      var pendingRequestKey = window.localStorage.getItem(CURRENT_REQUEST_KEY);
+      const CURRENT_REQUEST_KEY = '__torii_request';
+      let pendingRequestKey = window.localStorage.getItem(CURRENT_REQUEST_KEY);
+      const origin = window.location.origin;
+      let opener = window.opener;
+      try {
+        if (opener && opener.parent && opener.parent.origin === origin) {
+          opener = opener.parent;
+        }
+      } catch {}
 
       if (pendingRequestKey) {
         window.localStorage.removeItem(CURRENT_REQUEST_KEY);
-        var url = window.location.toString();
+        const url = window.location.toString();
         window.localStorage.setItem(pendingRequestKey, url);
-      }
+        const obj = {};
+        obj[pendingRequestKey] = url;
+        opener?.postMessage(
+          JSON.stringify(obj),
+          origin
+        );
 
-      window.close();
+        window.close();
+      } else {
+        // localStorage not shared with opener due to browser restrictions
+        opener?.postMessage('getPendingRequestKey', origin);
+        window.addEventListener('message', function(messageEvent) {
+          if (messageEvent.source === opener) {
+            const msg = JSON.parse(messageEvent.data);
+            if (msg.pendingRequestKey) {
+              pendingRequestKey = msg.pendingRequestKey;
+              url = window.location.toString();
+              const obj = {};
+              obj[pendingRequestKey] = url;
+              opener.postMessage(
+                JSON.stringify(obj),
+                origin
+              );
+
+              window.close();
+            }
+          }
+        });
+      }
     </script>
   </head>
 </html>
