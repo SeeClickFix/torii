@@ -12,7 +12,9 @@
         if (opener && opener.parent && opener.parent.origin === origin) {
           opener = opener.parent;
         }
-      } catch {}
+      } catch {
+        // opener.parent is cross-origin; keep posting to opener
+      }
 
       if (pendingRequestKey) {
         window.localStorage.removeItem(CURRENT_REQUEST_KEY);
@@ -20,27 +22,30 @@
         window.localStorage.setItem(pendingRequestKey, url);
         const obj = {};
         obj[pendingRequestKey] = url;
-        opener?.postMessage(
-          JSON.stringify(obj),
-          origin
-        );
+        opener?.postMessage(JSON.stringify(obj), origin);
 
         window.close();
       } else {
         // localStorage not shared with opener due to browser restrictions
         opener?.postMessage('getPendingRequestKey', origin);
-        window.addEventListener('message', function(messageEvent) {
-          if (messageEvent.source === opener) {
-            const msg = JSON.parse(messageEvent.data);
-            if (msg.pendingRequestKey) {
+        window.addEventListener('message', function (messageEvent) {
+          if (messageEvent.source === opener && messageEvent.origin === origin) {
+            let msg;
+            try {
+              msg = JSON.parse(messageEvent.data);
+            } catch {
+              return;
+            }
+            if (
+              msg &&
+              typeof msg.pendingRequestKey === 'string' &&
+              msg.pendingRequestKey.indexOf('torii-popup:') === 0
+            ) {
               pendingRequestKey = msg.pendingRequestKey;
-              url = window.location.toString();
+              const url = window.location.toString();
               const obj = {};
               obj[pendingRequestKey] = url;
-              opener.postMessage(
-                JSON.stringify(obj),
-                origin
-              );
+              opener.postMessage(JSON.stringify(obj), origin);
 
               window.close();
             }

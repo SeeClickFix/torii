@@ -17,6 +17,28 @@ function parseMessage(url, keys) {
   return data;
 }
 
+// Parses a result message posted by redirect.html, which has the form
+// '{"torii-popup:<id>":"<redirect url>"}'. Returns null for anything else,
+// since other scripts on the page may also use postMessage.
+function parseResultMessage(data) {
+  if (typeof data !== 'string') {
+    return null;
+  }
+  try {
+    const msg = JSON.parse(data);
+    if (!msg || typeof msg !== 'object' || Array.isArray(msg)) {
+      return null;
+    }
+    const keys = Object.keys(msg);
+    if (keys.length !== 1 || typeof msg[keys[0]] !== 'string') {
+      return null;
+    }
+    return { key: decodeURIComponent(keys[0]), url: msg[keys[0]] };
+  } catch {
+    return null;
+  }
+}
+
 var ServicesMixin = Mixin.create({
   init() {
     this._super(...arguments);
@@ -32,13 +54,29 @@ var ServicesMixin = Mixin.create({
   //   // resolves with data.code, as from http://app.com?code=13124
   // });
   //
-  // Services that use this mixin should implement openRemote
+  // Services that use this mixin should implement openRemote, closeRemote
+  // and pollRemote, and override remoteWindow if this.remote is not the
+  // window that will post the result.
   //
   open(url, keys, options) {
     let service = this;
     let lastRemote = this.remote;
     let storageToriiEventHandler;
     let messageToriiEventHandler;
+    let trustedWindow;
+
+    // Only messages from the window we opened, on our own origin, are
+    // trusted. The window is remembered because close() clears
+    // service.remote, possibly before the result message is handled.
+    function isFromRemote(messageEvent) {
+      if (messageEvent.origin !== window.location.origin) {
+        return false;
+      }
+      if (!trustedWindow) {
+        trustedWindow = service.remoteWindow();
+      }
+      return !!messageEvent.source && messageEvent.source === trustedWindow;
+    }
 
     return new EmberPromise(function (resolve, reject) {
       if (lastRemote) {
@@ -60,24 +98,27 @@ var ServicesMixin = Mixin.create({
       // Using postMessage as an alternative to localStorage/storageEvent
       // for case of web site embedded in iframe
       messageToriiEventHandler = function (messageEvent) {
+        if (!isFromRemote(messageEvent)) {
+          return;
+        }
         if (messageEvent.data === 'getPendingRequestKey') {
           messageEvent.source.postMessage(
             JSON.stringify({ pendingRequestKey: service.pendingRequestKey }),
             window.location.origin
           );
-        } else {
-          const msg = JSON.parse(messageEvent.data);
-          const key = Object.keys(msg)[0];
-          var remoteIdFromEvent = PopupIdSerializer.deserialize(
-            decodeURIComponent(key)
-          );
-          if (remoteId === remoteIdFromEvent) {
-            var data = parseMessage(msg[key], keys);
-            localStorage.removeItem(key);
-            run(function () {
-              resolve(data);
-            });
-          }
+          return;
+        }
+        const result = parseResultMessage(messageEvent.data);
+        if (!result) {
+          return;
+        }
+        var remoteIdFromEvent = PopupIdSerializer.deserialize(result.key);
+        if (remoteId === remoteIdFromEvent) {
+          var data = parseMessage(result.url, keys);
+          localStorage.removeItem(result.key);
+          run(function () {
+            resolve(data);
+          });
         }
       };
       window.addEventListener('message', messageToriiEventHandler);
@@ -88,6 +129,7 @@ var ServicesMixin = Mixin.create({
       localStorage.removeItem(WARNING_KEY);
 
       service.openRemote(url, pendingRequestKey, options);
+      trustedWindow = service.remoteWindow();
       service.schedulePolling();
 
       var onbeforeunload = window.onbeforeunload;
@@ -146,6 +188,11 @@ var ServicesMixin = Mixin.create({
       window.removeEventListener('message', messageToriiEventHandler);
       window.removeEventListener('storage', storageToriiEventHandler);
     });
+  },
+
+  // The window expected to post the result message back to this one.
+  remoteWindow() {
+    return this.remote;
   },
 
   close() {
