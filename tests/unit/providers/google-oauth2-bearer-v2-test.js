@@ -81,6 +81,36 @@ module('Unit | Provider | GoogleOAuth2BearerV2Provider', function (hooks) {
     );
   });
 
+  test('rejects when the token validation request fails', async function (assert) {
+    tokenInfo = { status: 400, body: '{"error":"invalid_token"}' };
+
+    await assert.rejects(
+      buildProvider().open(),
+      /Token validation request failed with status '400'/
+    );
+  });
+
+  test('rejects when token validation returns invalid JSON', async function (assert) {
+    tokenInfo = { status: 200, body: '<html>oops</html>' };
+
+    await assert.rejects(buildProvider().open(), /returned invalid JSON/);
+  });
+
+  test('rejects when token validation returns null', async function (assert) {
+    tokenInfo = { status: 200, body: 'null' };
+
+    await assert.rejects(buildProvider().open(), /'audience' field/);
+  });
+
+  test('rejects a token issued to another client', async function (assert) {
+    tokenInfo = {
+      status: 200,
+      body: JSON.stringify({ audience: 'other-client' }),
+    };
+
+    await assert.rejects(buildProvider().open(), /confused deputy/);
+  });
+
   test('rejects a missing state', async function (assert) {
     await assert.rejects(
       buildProvider({ state: undefined }).open(),

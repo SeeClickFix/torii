@@ -107,7 +107,29 @@ var GoogleOauth2BearerV2 = OAuth2Code.extend({
           let xhr = new XMLHttpRequest();
           xhr.overrideMimeType('application/json');
           xhr.onload = function () {
-            var jsonResponse = JSON.parse(xhr.responseText);
+            if (xhr.status < 200 || xhr.status >= 300) {
+              run(() =>
+                reject(
+                  new Error(
+                    `Token validation request failed with status '${xhr.status}' (server '${tokenValidationUrl}' '${xhr.responseText}').`
+                  )
+                )
+              );
+              return;
+            }
+            var jsonResponse;
+            try {
+              jsonResponse = JSON.parse(xhr.responseText) || {};
+            } catch (e) {
+              run(() =>
+                reject(
+                  new Error(
+                    `Token validation server returned invalid JSON (server '${tokenValidationUrl}').`
+                  )
+                )
+              );
+              return;
+            }
             /* the response is a JSON that looks like:
           {
             "audience":"8819981768.apps.googleusercontent.com",
