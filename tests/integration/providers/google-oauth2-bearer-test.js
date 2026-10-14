@@ -6,6 +6,9 @@ import MockPopupService from '../../helpers/mock-popup-service';
 
 const providerConfig = { apiKey: 'dummy' };
 
+// Google echoes the state it was sent.
+const stateFrom = (url) => new URL(url).searchParams.get('state');
+
 module('Integration | Provider | Google Bearer', function (hooks) {
   setupTest(hooks);
 
@@ -21,9 +24,9 @@ module('Integration | Provider | Google Bearer', function (hooks) {
     assert.expect(1);
 
     class GooglePopupService extends MockPopupService {
-      async open() {
+      async open(url) {
         super.open(...arguments);
-        return { access_token: 'test' };
+        return { access_token: 'test', state: stateFrom(url) };
       }
     }
 
@@ -56,7 +59,7 @@ module('Integration | Provider | Google Bearer', function (hooks) {
           url.indexOf('request_visible_actions=http%3A%2F%2Fsome-url.com') > -1,
           'request_visible_actions is present'
         );
-        return { access_token: 'test' };
+        return { access_token: 'test', state: stateFrom(url) };
       }
     }
 

@@ -3,6 +3,7 @@ import { Promise as EmberPromise } from 'rsvp';
 import { run } from '@ember/runloop';
 import OAuth2Code from 'torii/providers/oauth2-code';
 import { configurable } from 'torii/configuration';
+import { withState, pick } from './-private/utils';
 
 /**
  * This class implements a provider allowing authentication against google's
@@ -34,6 +35,14 @@ var GoogleOauth2BearerV2 = OAuth2Code.extend({
   redirectUri: configurable('redirectUri'),
 
   /**
+   * Whether to check that Google's response carries the `state` that was
+   * sent with the request.
+   *
+   * @property {boolean} verifyState
+   */
+  verifyState: configurable('verifyState', true),
+
+  /**
    * @method open
    * @return {Promise<object>} If the authorization attempt is a success,
    * the promise will resolve an object containing the following keys:
@@ -45,16 +54,24 @@ var GoogleOauth2BearerV2 = OAuth2Code.extend({
    */
   open(options) {
     this.refreshState();
-    var name = this.get('name'),
+    var provider = this,
+      name = this.get('name'),
       url = this.buildUrl(),
       redirectUri = this.get('redirectUri'),
       responseParams = this.get('responseParams'),
       tokenValidationUrl = this.get('tokenValidationUrl'),
-      clientId = this.get('apiKey');
+      clientId = this.get('apiKey'),
+      state = this.get('state'),
+      verifyState = this.get('verifyState');
 
     return this.get('popup')
-      .open(url, responseParams, options)
-      .then(function (authData) {
+      .open(
+        url,
+        verifyState ? withState(responseParams) : responseParams,
+        options
+      )
+      .then(function (rawAuthData) {
+        var authData = pick(rawAuthData, responseParams);
         var missingResponseParams = [];
 
         responseParams.forEach(function (param) {
@@ -69,6 +86,10 @@ var GoogleOauth2BearerV2 = OAuth2Code.extend({
               'these required response params: ' +
               missingResponseParams.join(', ')
           );
+        }
+
+        if (verifyState) {
+          provider.assertState(rawAuthData, state);
         }
 
         /* at this point 'authData' should look like:

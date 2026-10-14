@@ -1,8 +1,19 @@
 /* eslint-disable ember/no-get */
 import Provider from 'torii/providers/oauth2-code';
+import { configurable } from 'torii/configuration';
+import { withState, pick } from './-private/utils';
 
 var Oauth2Bearer = Provider.extend({
   responseType: 'token',
+
+  /**
+   * Whether to check that the provider's response carries the `state` that
+   * was sent with the request. Turn off only for providers that do not
+   * return `state`.
+   *
+   * @property {boolean} verifyState
+   */
+  verifyState: configurable('verifyState', true),
 
   /**
    * @method open
@@ -16,13 +27,20 @@ var Oauth2Bearer = Provider.extend({
    */
   open(options) {
     this.refreshState();
-    var name = this.get('name'),
+    var provider = this,
+      name = this.get('name'),
       url = this.buildUrl(),
       redirectUri = this.get('redirectUri'),
-      responseParams = this.get('responseParams');
+      responseParams = this.get('responseParams'),
+      state = this.get('state'),
+      verifyState = this.get('verifyState');
 
     return this.get('popup')
-      .open(url, responseParams, options)
+      .open(
+        url,
+        verifyState ? withState(responseParams) : responseParams,
+        options
+      )
       .then(function (authData) {
         var missingResponseParams = [];
 
@@ -40,8 +58,12 @@ var Oauth2Bearer = Provider.extend({
           );
         }
 
+        if (verifyState) {
+          provider.assertState(authData, state);
+        }
+
         return {
-          authorizationToken: authData,
+          authorizationToken: pick(authData, responseParams),
           provider: name,
           redirectUri: redirectUri,
         };

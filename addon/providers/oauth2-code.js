@@ -160,7 +160,8 @@ var Oauth2 = Provider.extend({
    */
   open(options) {
     this.refreshState();
-    var name = this.get('name'),
+    var provider = this,
+      name = this.get('name'),
       url = this.buildUrl(),
       redirectUri = this.get('redirectUri'),
       responseParams = this.get('responseParams'),
@@ -187,16 +188,8 @@ var Oauth2 = Provider.extend({
           );
         }
 
-        if (shouldCheckState && authData.state !== state) {
-          throw new Error(
-            'The response from the provider has an incorrect ' +
-              'session state param: should be "' +
-              state +
-              '", ' +
-              'but is "' +
-              authData.state +
-              '"'
-          );
+        if (shouldCheckState) {
+          provider.assertState(authData, state);
         }
 
         return {
@@ -205,6 +198,25 @@ var Oauth2 = Provider.extend({
           redirectUri: redirectUri,
         };
       });
+  },
+
+  /**
+   * Throws unless the provider's response carries the state that was sent.
+   *
+   * @method assertState
+   */
+  assertState(authData, state) {
+    if (authData.state !== state) {
+      throw new Error(
+        'The response from the provider has an incorrect ' +
+          'session state param: should be "' +
+          state +
+          '", ' +
+          'but is "' +
+          authData.state +
+          '"'
+      );
+    }
   },
 });
 
