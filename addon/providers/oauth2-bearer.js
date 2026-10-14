@@ -15,6 +15,7 @@ var Oauth2Bearer = Provider.extend({
    * closed the popup window, the promise rejects.
    */
   open(options) {
+    this.refreshState();
     var name = this.get('name'),
       url = this.buildUrl(),
       redirectUri = this.get('redirectUri'),
