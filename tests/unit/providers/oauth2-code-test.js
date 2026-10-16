@@ -189,6 +189,78 @@ module(
       );
     });
 
+    // A popup that answers with the state from the URL it was asked to open,
+    // or with `replayState` when set.
+    function buildStatePopup(states) {
+      return {
+        replayState: null,
+        async open(url) {
+          const state = new URL(url).searchParams.get('state');
+          states.push(state);
+          return {
+            code: 'abc',
+            authorization_code: 'abc',
+            state: this.replayState || state,
+          };
+        },
+      };
+    }
+
+    test('checks the state that was sent in the URL', async function (assert) {
+      configure({ providers: { 'mock-oauth2': { apiKey: 'dummyKey' } } });
+      const states = [];
+      const provider = Provider.extend({
+        popup: buildStatePopup(states),
+      }).create();
+
+      const result = await provider.open();
+
+      assert.strictEqual(result.authorizationCode, 'abc');
+      assert.ok(/^[A-Za-z0-9]{16}$/.test(states[0]), 'state was sent');
+    });
+
+    test('uses a new state for each login attempt', async function (assert) {
+      configure({ providers: { 'mock-oauth2': { apiKey: 'dummyKey' } } });
+      const states = [];
+      const provider = Provider.extend({
+        popup: buildStatePopup(states),
+      }).create();
+
+      await provider.open();
+      await provider.open();
+
+      assert.notEqual(states[0], states[1]);
+    });
+
+    test('rejects a state from an earlier login attempt', async function (assert) {
+      configure({ providers: { 'mock-oauth2': { apiKey: 'dummyKey' } } });
+      const states = [];
+      const popup = buildStatePopup(states);
+      const provider = Provider.extend({ popup }).create();
+
+      await provider.open();
+      popup.replayState = states[0];
+
+      await assert.rejects(provider.open(), /incorrect session state param/);
+    });
+
+    test('keeps a configured state across login attempts', async function (assert) {
+      configure({
+        providers: {
+          'mock-oauth2': { apiKey: 'dummyKey', state: 'fixed-state' },
+        },
+      });
+      const states = [];
+      const provider = Provider.extend({
+        popup: buildStatePopup(states),
+      }).create();
+
+      await provider.open();
+      await provider.open();
+
+      assert.deepEqual(states, ['fixed-state', 'fixed-state']);
+    });
+
     test('can override state property', function (assert) {
       assert.expect(1);
 

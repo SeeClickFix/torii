@@ -46,13 +46,10 @@
     "test:ember": "ember test",
     "test:ember-compatibility": "ember try:each"
   },
-  "resolutions": {
-    "isbinaryfile": "5.0.0"
-  },
   "dependencies": {
     "@ember/string": "^4.0.1",
     "ember-auto-import": "^2.10.0",
-    "ember-cli-babel": "^7.26.10",
+    "ember-cli-babel": "^7.26.11",
     "ember-cli-htmlbars": "^5.7.2"
   },
   "devDependencies": {
@@ -64,7 +61,7 @@
     "@glimmer/tracking": "^1.0.4",
     "babel-eslint": "^10.1.0",
     "broccoli-asset-rev": "^3.0.0",
-    "ember-auto-import": "^2.4.3",
+    "ember-auto-import": "^2.10.0",
     "ember-cli": "~4.8.1",
     "ember-cli-dependency-checker": "^3.3.1",
     "ember-cli-inject-live-reload": "^2.1.0",
@@ -74,7 +71,7 @@
     "ember-load-initializers": "^2.1.2",
     "ember-maybe-import-regenerator": "^1.0.0",
     "ember-page-title": "^7.0.0",
-    "ember-qunit": "^5.1.5",
+    "ember-qunit": "^6.2.0",
     "ember-resolver": "^8.0.3",
     "ember-source": "~4.8.0",
     "ember-source-channel-url": "^3.0.0",
@@ -83,6 +80,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-ember": "^11.1.0",
+    "eslint-plugin-html": "^7.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-qunit": "^7.3.1",
@@ -113,5 +111,14 @@
   "ember-addon": {
     "demoUrl": "http://adopted-ember-addons.github.io/torii/demo.html",
     "configPath": "tests/dummy/config"
+  },
+  "pnpm": {
+    "overrides": {
+      "@babel/runtime": "^7.26.10",
+      "ansi-html": "0.0.9",
+      "decode-uri-component": "0.5.0",
+      "testem": "~3.19.1",
+      "tmp": "^0.2.7"
+    }
   }
 }

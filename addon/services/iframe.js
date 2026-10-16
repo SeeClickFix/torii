@@ -16,6 +16,10 @@ var Iframe = EmberObject.extend(Evented, UiServiceMixin, {
     this.remote.remove();
   },
 
+  remoteWindow() {
+    return this.remote && this.remote.contentWindow;
+  },
+
   pollRemote() {
     if (document.querySelector('#torii-iframe') === null) {
       this.trigger('didClose');

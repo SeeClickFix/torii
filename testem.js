@@ -17,6 +17,8 @@ module.exports = {
         '--mute-audio',
         '--remote-debugging-port=0',
         '--window-size=1440,900',
+        // tests/integration/popup-handoff-test.js opens real popups
+        '--disable-popup-blocking',
       ].filter(Boolean),
     },
   },

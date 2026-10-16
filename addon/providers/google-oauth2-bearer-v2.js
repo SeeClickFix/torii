@@ -3,6 +3,7 @@ import { Promise as EmberPromise } from 'rsvp';
 import { run } from '@ember/runloop';
 import OAuth2Code from 'torii/providers/oauth2-code';
 import { configurable } from 'torii/configuration';
+import { withState, pick } from './-private/utils';
 
 /**
  * This class implements a provider allowing authentication against google's
@@ -34,6 +35,14 @@ var GoogleOauth2BearerV2 = OAuth2Code.extend({
   redirectUri: configurable('redirectUri'),
 
   /**
+   * Whether to check that Google's response carries the `state` that was
+   * sent with the request.
+   *
+   * @property {boolean} verifyState
+   */
+  verifyState: configurable('verifyState', true),
+
+  /**
    * @method open
    * @return {Promise<object>} If the authorization attempt is a success,
    * the promise will resolve an object containing the following keys:
@@ -44,16 +53,25 @@ var GoogleOauth2BearerV2 = OAuth2Code.extend({
    * closed the popup window, the promise rejects.
    */
   open(options) {
-    var name = this.get('name'),
+    this.refreshState();
+    var provider = this,
+      name = this.get('name'),
       url = this.buildUrl(),
       redirectUri = this.get('redirectUri'),
       responseParams = this.get('responseParams'),
       tokenValidationUrl = this.get('tokenValidationUrl'),
-      clientId = this.get('apiKey');
+      clientId = this.get('apiKey'),
+      state = this.get('state'),
+      verifyState = this.get('verifyState');
 
     return this.get('popup')
-      .open(url, responseParams, options)
-      .then(function (authData) {
+      .open(
+        url,
+        verifyState ? withState(responseParams) : responseParams,
+        options
+      )
+      .then(function (rawAuthData) {
+        var authData = pick(rawAuthData, responseParams);
         var missingResponseParams = [];
 
         responseParams.forEach(function (param) {
@@ -68,6 +86,10 @@ var GoogleOauth2BearerV2 = OAuth2Code.extend({
               'these required response params: ' +
               missingResponseParams.join(', ')
           );
+        }
+
+        if (verifyState) {
+          provider.assertState(rawAuthData, state);
         }
 
         /* at this point 'authData' should look like:
@@ -85,7 +107,29 @@ var GoogleOauth2BearerV2 = OAuth2Code.extend({
           let xhr = new XMLHttpRequest();
           xhr.overrideMimeType('application/json');
           xhr.onload = function () {
-            var jsonResponse = JSON.parse(xhr.responseText);
+            if (xhr.status < 200 || xhr.status >= 300) {
+              run(() =>
+                reject(
+                  new Error(
+                    `Token validation request failed with status '${xhr.status}' (server '${tokenValidationUrl}' '${xhr.responseText}').`
+                  )
+                )
+              );
+              return;
+            }
+            var jsonResponse;
+            try {
+              jsonResponse = JSON.parse(xhr.responseText) || {};
+            } catch (e) {
+              run(() =>
+                reject(
+                  new Error(
+                    `Token validation server returned invalid JSON (server '${tokenValidationUrl}').`
+                  )
+                )
+              );
+              return;
+            }
             /* the response is a JSON that looks like:
           {
             "audience":"8819981768.apps.googleusercontent.com",

@@ -77,6 +77,96 @@ module(
       );
     });
 
+    // Answers with the state from the URL it was asked to open, unless the
+    // test overrides it, and records the keys it was asked to read.
+    function buildStatePopup(calls, response = {}) {
+      return {
+        async open(url, keys) {
+          const state = new URL(url).searchParams.get('state');
+          calls.push({ state, keys });
+          return Object.assign({ token: 'tok', state }, response);
+        },
+      };
+    }
+
+    const TokenProvider = BaseProvider.extend({
+      name: 'mock-bearer',
+      baseUrl: 'http://example.com',
+      redirectUri: 'http://foo',
+      responseParams: ['token'],
+    });
+
+    function configureBearer(settings = {}) {
+      configure({
+        providers: {
+          'mock-bearer': Object.assign({ apiKey: 'dummyKey' }, settings),
+        },
+      });
+    }
+
+    test('Provider#open checks the state it sent by default', async function (assert) {
+      configureBearer();
+      const calls = [];
+      const provider = TokenProvider.extend({
+        popup: buildStatePopup(calls),
+      }).create();
+
+      const result = await provider.open();
+
+      assert.deepEqual(calls[0].keys, ['token', 'state'], 'reads state');
+      assert.deepEqual(
+        result.authorizationToken,
+        { token: 'tok' },
+        'does not add state to the token'
+      );
+    });
+
+    test('Provider#open rejects a mismatched state', async function (assert) {
+      configureBearer();
+      const provider = TokenProvider.extend({
+        popup: buildStatePopup([], { state: 'forged' }),
+      }).create();
+
+      await assert.rejects(provider.open(), /incorrect session state param/);
+    });
+
+    test('Provider#open rejects a missing state', async function (assert) {
+      configureBearer();
+      const provider = TokenProvider.extend({
+        popup: buildStatePopup([], { state: undefined }),
+      }).create();
+
+      await assert.rejects(provider.open(), /incorrect session state param/);
+    });
+
+    test('Provider#open skips the state check when verifyState is false', async function (assert) {
+      configureBearer({ verifyState: false });
+      const calls = [];
+      const provider = TokenProvider.extend({
+        popup: buildStatePopup(calls, { state: undefined }),
+      }).create();
+
+      const result = await provider.open();
+
+      assert.deepEqual(calls[0].keys, ['token'], 'does not read state');
+      assert.deepEqual(result.authorizationToken, { token: 'tok' });
+    });
+
+    test('Provider#open keeps state in the token when it is a response param', async function (assert) {
+      configureBearer();
+      const provider = TokenProvider.extend({
+        responseParams: ['token', 'state'],
+        popup: buildStatePopup([]),
+      }).create();
+
+      const result = await provider.open();
+
+      assert.deepEqual(Object.keys(result.authorizationToken), [
+        'token',
+        'state',
+      ]);
+    });
+
     test('Provider#open assert.throws when any required response params are missing', function (assert) {
       assert.expect(3);
 

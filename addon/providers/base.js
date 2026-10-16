@@ -2,8 +2,7 @@
 import EmberObject, { computed } from '@ember/object';
 import requiredProperty from 'torii/lib/required-property';
 import { getOwner } from 'torii/lib/container-utils';
-import { configurable } from 'torii/configuration';
-import configuration from 'torii/configuration';
+import { configurable, getConfiguration } from 'torii/configuration';
 
 var DEFAULT_REMOTE_SERVICE_NAME = 'popup';
 
@@ -31,7 +30,7 @@ var Base = EmberObject.extend({
     var owner = getOwner(this);
     var remoteServiceName =
       this.get('configuredRemoteServiceName') ||
-      configuration.remoteServiceName ||
+      getConfiguration().remoteServiceName ||
       DEFAULT_REMOTE_SERVICE_NAME;
 
     return owner.lookup('torii-service:' + remoteServiceName);

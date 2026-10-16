@@ -12,7 +12,7 @@ import { Promise as EmberPromise } from 'rsvp';
 import EmberObject from '@ember/object';
 
 import { CURRENT_REQUEST_KEY, WARNING_KEY } from './mixins/ui-service-mixin';
-import configuration from 'torii/configuration';
+import { getConfiguration } from 'torii/configuration';
 
 export class ToriiRedirectError extends Error {
   constructor() {
@@ -34,7 +34,7 @@ var RedirectHandler = EmberObject.extend({
         windowObject.localStorage.setItem(WARNING_KEY, 'true');
         windowObject.localStorage.setItem(pendingRequestKey, url);
 
-        var remoteServiceName = configuration.remoteServiceName || 'popup';
+        var remoteServiceName = getConfiguration().remoteServiceName || 'popup';
         if (remoteServiceName === 'popup') {
           // NOTE : If a single provider has been configured to use the 'iframe'
           // service, this next line will still be called. It will just fail silently.

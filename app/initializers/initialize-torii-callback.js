@@ -1,5 +1,6 @@
 import config from '../config/environment';
 import RedirectHandler from 'torii/redirect-handler';
+import { configure } from 'torii/configuration';
 
 export default {
   name: 'torii-callback',
@@ -14,6 +15,9 @@ export default {
       return;
     }
 
+    // The torii initializer has not run yet; the handler needs the
+    // configuration to know whether it runs in a popup.
+    configure(config.torii || {});
     application.deferReadiness();
     RedirectHandler.handle(window).catch(function () {
       application.advanceReadiness();

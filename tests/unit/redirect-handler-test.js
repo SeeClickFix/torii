@@ -2,6 +2,7 @@
 import { run } from '@ember/runloop';
 import RedirectHandler from 'torii/redirect-handler';
 import { CURRENT_REQUEST_KEY } from 'torii/mixins/ui-service-mixin';
+import { configure } from 'torii/configuration';
 import { module, test } from 'qunit';
 
 module('Unit | RedirectHandler', function (/*hooks*/) {
@@ -109,6 +110,36 @@ module('Unit | RedirectHandler', function (/*hooks*/) {
     run(function () {
       handler.run();
     });
+  });
+
+  test('does not close the window when torii is configured to use an iframe', function (assert) {
+    assert.expect(1);
+
+    configure({ remoteServiceName: 'iframe' });
+    const mockWindow = buildMockWindow(
+      'torii-popup:abc123',
+      'http://authServer?code=1234512345fw'
+    );
+    mockWindow.localStorage.getItem = function (key) {
+      if (key === CURRENT_REQUEST_KEY) {
+        return 'some-key';
+      }
+    };
+    const handler = RedirectHandler.create({ windowObject: mockWindow });
+
+    let closed = false;
+    mockWindow.close = function () {
+      closed = true;
+    };
+
+    try {
+      run(function () {
+        handler.run();
+      });
+      assert.false(closed, 'window was not closed');
+    } finally {
+      configure({});
+    }
   });
 
   test('does not close the window when a not torii popup', function (assert) {

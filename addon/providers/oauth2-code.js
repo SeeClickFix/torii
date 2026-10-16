@@ -98,6 +98,17 @@ var Oauth2 = Provider.extend({
   }),
 
   /**
+   * Discards the generated state so the next login attempt uses a new one.
+   * A state set in the configuration is kept.
+   *
+   * @method refreshState
+   */
+  refreshState() {
+    this.set('_randomState', null);
+    this.notifyPropertyChange('state');
+  },
+
+  /**
    * The oauth response type we expect from the third party provider. Hardcoded to 'code' for oauth2-code flows
    * @property {string} responseType
    */
@@ -148,7 +159,9 @@ var Oauth2 = Provider.extend({
    * closed the popup window, the promise rejects.
    */
   open(options) {
-    var name = this.get('name'),
+    this.refreshState();
+    var provider = this,
+      name = this.get('name'),
       url = this.buildUrl(),
       redirectUri = this.get('redirectUri'),
       responseParams = this.get('responseParams'),
@@ -175,16 +188,8 @@ var Oauth2 = Provider.extend({
           );
         }
 
-        if (shouldCheckState && authData.state !== state) {
-          throw new Error(
-            'The response from the provider has an incorrect ' +
-              'session state param: should be "' +
-              state +
-              '", ' +
-              'but is "' +
-              authData.state +
-              '"'
-          );
+        if (shouldCheckState) {
+          provider.assertState(authData, state);
         }
 
         return {
@@ -193,6 +198,25 @@ var Oauth2 = Provider.extend({
           redirectUri: redirectUri,
         };
       });
+  },
+
+  /**
+   * Throws unless the provider's response carries the state that was sent.
+   *
+   * @method assertState
+   */
+  assertState(authData, state) {
+    if (authData.state !== state) {
+      throw new Error(
+        'The response from the provider has an incorrect ' +
+          'session state param: should be "' +
+          state +
+          '", ' +
+          'but is "' +
+          authData.state +
+          '"'
+      );
+    }
   },
 });
 

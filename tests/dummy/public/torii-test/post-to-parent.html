@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Torii test: post result to parent</title>
+    <script>
+      // Stands in for redirect.html inside the iframe service: it only uses
+      // the postMessage handoff, so tests exercise the real origin and source.
+      var key = window.localStorage.getItem('__torii_request');
+      var msg = {};
+      msg[key] = window.location.toString();
+      window.parent.postMessage(JSON.stringify(msg), window.location.origin);
+    </script>
+  </head>
+</html>

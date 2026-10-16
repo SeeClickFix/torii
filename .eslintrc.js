@@ -51,5 +51,10 @@ module.exports = {
       files: ['tests/**/*-test.{js,ts}'],
       extends: ['plugin:qunit/recommended'],
     },
+    {
+      // inline scripts in static pages, such as public/redirect.html
+      files: ['public/**/*.html', 'tests/dummy/public/**/*.html'],
+      plugins: ['html'],
+    },
   ],
 };
